@@ -1,9 +1,6 @@
-/**
- * Unit tests for favorites repository
- * @vitest-environment node
- */
+/** @vitest-environment node */
 
-import { describe, it, expect, beforeAll, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, afterAll, afterEach, vi } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
@@ -13,15 +10,16 @@ describe('Favorites repository', () => {
   let dbPath: string;
   let databaseModule: typeof import('../../../src/storage/database.js') | null = null;
   let favoritesModule: typeof import('../../../src/storage/repositories/favorites.js') | null = null;
+  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
 
   beforeAll(async () => {
-    try {
-      databaseModule = await import('../../../src/storage/database.js');
-      favoritesModule = await import('../../../src/storage/repositories/favorites.js');
-    } catch (err) {
-      console.warn('Skipping favorites tests:', err);
-    }
-    vi.spyOn(console, 'log').mockImplementation(() => {});
+    databaseModule = await import('../../../src/storage/database.js');
+    favoritesModule = await import('../../../src/storage/repositories/favorites.js');
+    consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+  });
+
+  afterAll(() => {
+    consoleLogSpy.mockRestore();
   });
 
   beforeEach(() => {

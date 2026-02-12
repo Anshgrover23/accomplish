@@ -261,8 +261,13 @@ export function registerIPCHandlers(): void {
   const allowedFavoriteStatuses: Array<'completed' | 'interrupted'> = ['completed', 'interrupted'];
   handle('task:favorite:add', async (_event: IpcMainInvokeEvent, taskId: string) => {
     const task = storage.getTask(taskId);
-    if (!task || !allowedFavoriteStatuses.includes(task.status as 'completed' | 'interrupted')) {
-      return;
+    if (!task) {
+      throw new Error(`Favorite failed: task not found (taskId: ${taskId})`);
+    }
+    if (!allowedFavoriteStatuses.includes(task.status as 'completed' | 'interrupted')) {
+      throw new Error(
+        `Favorite failed: invalid status (taskId: ${taskId}, status: ${task.status})`
+      );
     }
     storage.addFavorite(taskId, task.prompt, task.summary);
   });

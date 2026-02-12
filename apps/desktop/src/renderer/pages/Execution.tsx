@@ -1454,7 +1454,6 @@ export default function ExecutionPage() {
         </div>
       )}
 
-      {/* Favorites + Start New Task when task is completed or interrupted */}
       {(currentTask?.status === 'completed' || currentTask?.status === 'interrupted') && (
         <ExecutionCompleteFooter
           taskId={currentTask.id}

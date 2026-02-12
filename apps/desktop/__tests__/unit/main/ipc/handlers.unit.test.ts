@@ -172,7 +172,9 @@ vi.mock('@accomplish_ai/agent-core', async (importOriginal) => {
     }),
     removeFavorite: vi.fn((taskId: string) => {
       const i = mockFavorites.findIndex((f) => f.taskId === taskId);
-      if (i >= 0) mockFavorites.splice(i, 1);
+      if (i >= 0) {
+        mockFavorites.splice(i, 1);
+      }
     }),
     getFavorites: vi.fn(() => [...mockFavorites]),
     isFavorite: vi.fn((taskId: string) => mockFavorites.some((f) => f.taskId === taskId)),
@@ -917,14 +919,15 @@ describe('IPC Handlers Integration', () => {
       expect(addFavorite).toHaveBeenCalledWith(taskId, 'Complete me', 'Done');
     });
 
-    it('task:favorite:add should no-op when task not found', async () => {
-      await invokeHandler('task:favorite:add', 'task_nonexistent');
-
+    it('task:favorite:add should reject when task not found', async () => {
+      await expect(invokeHandler('task:favorite:add', 'task_nonexistent')).rejects.toThrow(
+        'Favorite failed: task not found (taskId: task_nonexistent)'
+      );
       const { addFavorite } = await import('@accomplish_ai/agent-core');
       expect(addFavorite).not.toHaveBeenCalled();
     });
 
-    it('task:favorite:add should no-op when task status is not completed or interrupted', async () => {
+    it('task:favorite:add should reject when task status is not completed or interrupted', async () => {
       const taskId = 'task_running';
       mockTasks.push({
         id: taskId,
@@ -934,8 +937,9 @@ describe('IPC Handlers Integration', () => {
         createdAt: new Date().toISOString(),
       });
 
-      await invokeHandler('task:favorite:add', taskId);
-
+      await expect(invokeHandler('task:favorite:add', taskId)).rejects.toThrow(
+        'Favorite failed: invalid status (taskId: task_running, status: running)'
+      );
       const { addFavorite } = await import('@accomplish_ai/agent-core');
       expect(addFavorite).not.toHaveBeenCalled();
     });

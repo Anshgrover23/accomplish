@@ -234,7 +234,6 @@ export default function HomePage() {
               />
             </CardContent>
 
-            {/* Favorites (above examples) */}
             {favorites.length > 0 && (
               <div className="border-t border-border">
                 <div className="px-6 py-3 flex items-center justify-between">
