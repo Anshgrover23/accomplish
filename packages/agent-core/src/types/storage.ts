@@ -52,6 +52,7 @@ export interface StoredFavorite {
   summary?: string;
   favoritedAt: string;
 }
+export type ThemePreference = 'system' | 'light' | 'dark';
 
 /** Application settings snapshot */
 export interface AppSettings {
@@ -63,6 +64,7 @@ export interface AppSettings {
   azureFoundryConfig: AzureFoundryConfig | null;
   lmstudioConfig: LMStudioConfig | null;
   openaiBaseUrl: string;
+  theme: ThemePreference;
 }
 
 // ---------------------------------------------------------------------------
@@ -139,6 +141,10 @@ export interface AppSettingsAPI {
   getOpenAiBaseUrl(): string;
   /** Set the custom OpenAI base URL */
   setOpenAiBaseUrl(baseUrl: string): void;
+  /** Get the current theme preference */
+  getTheme(): ThemePreference;
+  /** Set the theme preference */
+  setTheme(theme: ThemePreference): void;
   /** Get all application settings as a snapshot */
   getAppSettings(): AppSettings;
   /** Reset all application settings to defaults */

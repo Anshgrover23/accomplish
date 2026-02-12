@@ -21,6 +21,7 @@ export type {
   StoredTask,
   StoredFavorite,
   AppSettings,
+  ThemePreference,
   TaskStorageAPI,
   AppSettingsAPI,
   ProviderSettingsAPI,

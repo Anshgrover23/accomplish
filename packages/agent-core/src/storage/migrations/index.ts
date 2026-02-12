@@ -14,7 +14,8 @@ import { migration as v004 } from './v004-openai-base-url.js';
 import { migration as v005 } from './v005-task-todos.js';
 import { migration as v006 } from './v006-skills.js';
 import { migration as v007 } from './v007-connectors.js';
-import { migration as v008 } from './v008-favorites.js';
+import { migration as v008 } from './v008-theme.js';
+import { migration as v009 } from './v009-favorites.js';
 
 const migrations: Migration[] = [
   v001,
