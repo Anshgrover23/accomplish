@@ -18,11 +18,14 @@ export default function ConversationListItem({ task }: ConversationListItemProps
   const location = useLocation();
   const isActive = location.pathname === `/execution/${task.id}`;
   const { deleteTask, favorites, loadFavorites, addFavorite, removeFavorite } = useTaskStore();
-  const isFavorited = favorites.some((f) => f.taskId === task.id);
+  const favoritesList = Array.isArray(favorites) ? favorites : [];
+  const isFavorited = favoritesList.some((f) => f.taskId === task.id);
   const canFavorite = COMPLETED_OR_INTERRUPTED.includes(task.status);
 
   useEffect(() => {
-    loadFavorites();
+    if (typeof loadFavorites === 'function') {
+      loadFavorites();
+    }
   }, [loadFavorites]);
 
   const handleClick = () => {

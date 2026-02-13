@@ -90,6 +90,7 @@ export default function HomePage() {
   const [settingsInitialTab, setSettingsInitialTab] = useState<'providers' | 'voice' | 'skills' | 'connectors'>('providers');
   const location = useLocation();
   const favorites = useTaskStore((state) => state.favorites);
+  const favoritesList = Array.isArray(favorites) ? favorites : [];
   const loadFavorites = useTaskStore((state) => state.loadFavorites);
   const removeFavorite = useTaskStore((state) => state.removeFavorite);
   const { startTask, isLoading, addTaskUpdate, setPermissionRequest } = useTaskStore();
@@ -97,11 +98,13 @@ export default function HomePage() {
   const accomplish = getAccomplish();
 
   useEffect(() => {
-    loadFavorites();
+    if (typeof loadFavorites === 'function') {
+      loadFavorites();
+    }
   }, [loadFavorites]);
 
   useEffect(() => {
-    if (location.pathname === '/') {
+    if (location.pathname === '/' && typeof loadFavorites === 'function') {
       loadFavorites();
     }
   }, [location.pathname, loadFavorites]);
@@ -180,9 +183,9 @@ export default function HomePage() {
   };
 
   const displayedFavorites = showAllFavorites
-    ? favorites
-    : favorites.slice(0, FAVORITES_PREVIEW_COUNT);
-  const hasMoreFavorites = favorites.length > FAVORITES_PREVIEW_COUNT;
+    ? favoritesList
+    : favoritesList.slice(0, FAVORITES_PREVIEW_COUNT);
+  const hasMoreFavorites = favoritesList.length > FAVORITES_PREVIEW_COUNT;
 
   return (
     <>
@@ -234,7 +237,7 @@ export default function HomePage() {
               />
             </CardContent>
 
-            {favorites.length > 0 && (
+            {favoritesList.length > 0 && (
               <div className="border-t border-border">
                 <div className="px-6 py-3 flex items-center justify-between">
                   <span className="text-sm font-medium text-foreground">Favorites</span>
@@ -288,7 +291,7 @@ export default function HomePage() {
                       onClick={() => setShowAllFavorites(true)}
                       className="mt-2 text-sm text-muted-foreground hover:text-foreground"
                     >
-                      Show all {favorites.length} favorites
+                      Show all {favoritesList.length} favorites
                     </button>
                   )}
                 </div>

@@ -178,10 +178,13 @@ function getDisplayFilePaths(request: { filePath?: string; filePaths?: string[] 
 
 function ExecutionCompleteFooter({ taskId, onStartNewTask }: { taskId: string; onStartNewTask: () => void }) {
   const { currentTask, favorites, loadFavorites, addFavorite, removeFavorite } = useTaskStore();
-  const isFavorited = favorites.some((f) => f.taskId === taskId);
+  const favoritesList = Array.isArray(favorites) ? favorites : [];
+  const isFavorited = favoritesList.some((f) => f.taskId === taskId);
 
   useEffect(() => {
-    loadFavorites();
+    if (typeof loadFavorites === 'function') {
+      loadFavorites();
+    }
   }, [loadFavorites]);
 
   const handleToggleFavorite = useCallback(async () => {
@@ -193,6 +196,7 @@ function ExecutionCompleteFooter({ taskId, onStartNewTask }: { taskId: string; o
   }, [taskId, isFavorited, addFavorite, removeFavorite]);
 
   const statusLabel = currentTask?.status === 'interrupted' ? 'stopped' : currentTask?.status ?? '';
+  const canFavorite = currentTask?.status === 'completed' || currentTask?.status === 'interrupted';
 
   return (
     <div className="flex-shrink-0 border-t border-border bg-card/50 px-6 py-4 flex flex-col items-center gap-3">
@@ -200,16 +204,18 @@ function ExecutionCompleteFooter({ taskId, onStartNewTask }: { taskId: string; o
         Task {statusLabel}
       </p>
       <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => void handleToggleFavorite()}
-          className="gap-2"
-          title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
-        >
-          <Star className={`h-4 w-4 ${isFavorited ? 'fill-current' : ''}`} />
-          {isFavorited ? 'Remove from favorites' : 'Add to favorites'}
-        </Button>
+        {canFavorite && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => void handleToggleFavorite()}
+            className="gap-2"
+            title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <Star className={`h-4 w-4 ${isFavorited ? 'fill-current' : ''}`} />
+            {isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+          </Button>
+        )}
         <Button onClick={onStartNewTask}>
           Start New Task
         </Button>
@@ -1454,7 +1460,7 @@ export default function ExecutionPage() {
         </div>
       )}
 
-      {(currentTask?.status === 'completed' || currentTask?.status === 'interrupted') && (
+      {['completed', 'interrupted', 'failed', 'cancelled'].includes(currentTask?.status ?? '') && (
         <ExecutionCompleteFooter
           taskId={currentTask.id}
           onStartNewTask={() => navigate('/')}

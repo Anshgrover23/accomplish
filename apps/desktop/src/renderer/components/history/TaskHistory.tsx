@@ -11,13 +11,16 @@ interface TaskHistoryProps {
 
 export default function TaskHistory({ limit, showTitle = true }: TaskHistoryProps) {
   const { tasks, favorites, loadTasks, loadFavorites, addFavorite, removeFavorite, deleteTask, clearHistory } = useTaskStore();
+  const favoritesList = Array.isArray(favorites) ? favorites : [];
 
   useEffect(() => {
     loadTasks();
   }, [loadTasks]);
 
   useEffect(() => {
-    loadFavorites();
+    if (typeof loadFavorites === 'function') {
+      loadFavorites();
+    }
   }, [loadFavorites]);
 
   const displayedTasks = limit ? tasks.slice(0, limit) : tasks;
@@ -55,9 +58,12 @@ export default function TaskHistory({ limit, showTitle = true }: TaskHistoryProp
           <TaskHistoryItem
             key={task.id}
             task={task}
-            isFavorited={favorites.some((f) => f.taskId === task.id)}
+            isFavorited={favoritesList.some((f) => f.taskId === task.id)}
             onToggleFavorite={async () => {
-              if (favorites.some((f) => f.taskId === task.id)) {
+              if (typeof addFavorite !== 'function' || typeof removeFavorite !== 'function') {
+                return;
+              }
+              if (favoritesList.some((f) => f.taskId === task.id)) {
                 await removeFavorite(task.id);
               } else {
                 await addFavorite(task.id);
@@ -135,6 +141,8 @@ function TaskHistoryItem({
         </button>
       )}
       <button
+        type="button"
+        data-testid="task-delete-button"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
