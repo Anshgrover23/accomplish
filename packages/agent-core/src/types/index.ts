@@ -59,10 +59,7 @@ export type {
 } from './log-writer.js';
 
 // Skills Manager API
-export type {
-  SkillsManagerAPI,
-  SkillsManagerOptions,
-} from './skills-manager.js';
+export type { SkillsManagerAPI, SkillsManagerOptions } from './skills-manager.js';
 
 // Speech Service API
 export type {

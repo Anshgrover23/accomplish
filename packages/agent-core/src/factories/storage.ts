@@ -98,7 +98,8 @@ export function createStorage(options: StorageOptions = {}): StorageAPI {
     getTasks: () => getTasks(),
     getTask: (taskId) => getTask(taskId),
     saveTask: (task) => saveTask(task),
-    updateTaskStatus: (taskId, status, completedAt) => updateTaskStatus(taskId, status, completedAt),
+    updateTaskStatus: (taskId, status, completedAt) =>
+      updateTaskStatus(taskId, status, completedAt),
     addTaskMessage: (taskId, message) => addTaskMessage(taskId, message),
     updateTaskSessionId: (taskId, sessionId) => updateTaskSessionId(taskId, sessionId),
     updateTaskSummary: (taskId, summary) => updateTaskSummary(taskId, summary),
@@ -170,8 +171,7 @@ export function createStorage(options: StorageOptions = {}): StorageAPI {
         return null;
       }
     },
-    deleteConnectorTokens: (connectorId) =>
-      secureStorage.delete(`connector-tokens:${connectorId}`),
+    deleteConnectorTokens: (connectorId) => secureStorage.delete(`connector-tokens:${connectorId}`),
 
     // Secure Storage
     storeApiKey: (provider, apiKey) => secureStorage.storeApiKey(provider, apiKey),
