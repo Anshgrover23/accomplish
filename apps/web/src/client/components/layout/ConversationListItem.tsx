@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import type { Task } from '@accomplish_ai/agent-core/common';
 import { cn } from '@/lib/utils';
-import { X, Loader2, Star } from 'lucide-react';
+import { X, Star, SpinnerGap } from '@phosphor-icons/react';
 import { useTaskStore } from '@/stores/taskStore';
 import { STATUS_COLORS, extractDomains } from '@/lib/task-utils';
 
@@ -72,7 +72,7 @@ export function ConversationListItem({ task }: ConversationListItemProps) {
     >
       <span className="flex items-center justify-center shrink-0 w-3 h-3">
         {task.status === 'running' || task.status === 'waiting_permission' ? (
-          <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
+          <SpinnerGap className="w-3 h-3 animate-spin text-muted-foreground" />
         ) : (
           <span className={cn('w-2 h-2 rounded-full', statusColor)} />
         )}

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router';
-import { Star } from 'lucide-react';
+import { Star } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useTaskStore } from '../../stores/taskStore';
 import type { Task } from '@accomplish_ai/agent-core/common';
