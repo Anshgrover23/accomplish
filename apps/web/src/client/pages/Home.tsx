@@ -180,67 +180,6 @@ export function HomePage() {
               {t('title')}
             </motion.h1>
 
-            {favoritesList.length > 0 && (
-              <div className="border-t border-border">
-                <div className="px-6 py-3 flex items-center justify-between">
-                  <span className="text-sm font-medium text-foreground">Favorites</span>
-                </div>
-                <div className="px-6 pb-4">
-                  <div className="grid grid-cols-3 gap-3">
-                    <AnimatePresence>
-                      {displayedFavorites.map((fav) => (
-                        <motion.div
-                          key={fav.taskId}
-                          role="button"
-                          tabIndex={0}
-                          initial={{ opacity: 0, y: 8 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          transition={springs.gentle}
-                          whileHover={{ scale: 1.03, transition: { duration: 0.15 } }}
-                          whileTap={{ scale: 0.97 }}
-                          layout
-                          onClick={() => setPrompt(fav.prompt)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              setPrompt(fav.prompt);
-                            }
-                          }}
-                          className="group relative flex flex-col items-center justify-center gap-2 p-3 rounded-lg border border-border bg-card hover:border-ring hover:bg-muted/50 text-left w-full min-h-[4rem] cursor-pointer"
-                        >
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              void removeFavorite(fav.taskId);
-                            }}
-                            className="absolute top-1.5 right-1.5 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-card"
-                            title="Remove from favorites"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </button>
-                          <p className="text-xs font-medium text-foreground text-center line-clamp-2 w-full px-5">
-                            {fav.summary || fav.prompt.slice(0, 60)}
-                            {(fav.summary || fav.prompt).length > 60 ? '…' : ''}
-                          </p>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                  {hasMoreFavorites && !showAllFavorites && (
-                    <button
-                      type="button"
-                      onClick={() => setShowAllFavorites(true)}
-                      className="mt-2 text-sm text-muted-foreground hover:text-foreground"
-                    >
-                      Show all {favoritesList.length} favorites
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -272,13 +211,82 @@ export function HomePage() {
               />
             </motion.div>
 
+            <div id="favorites" className="flex flex-col gap-3 w-full scroll-mt-4">
+              <h2 className="font-apparat text-[22px] font-light tracking-[-0.66px] text-foreground text-center">
+                {t('favorites.title')}
+              </h2>
+              {favoritesList.length > 0 ? (
+                <>
+                  <div className="grid grid-cols-3 gap-4 w-full">
+                    <AnimatePresence>
+                      {displayedFavorites.map((fav) => (
+                        <motion.div
+                          key={fav.taskId}
+                          role="button"
+                          tabIndex={0}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          transition={springs.gentle}
+                          whileTap={{ scale: 0.98 }}
+                          layout
+                          onClick={() => setPrompt(fav.prompt)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              setPrompt(fav.prompt);
+                            }
+                          }}
+                          className="group flex flex-col justify-between rounded-[4px] border border-border hover:border-muted-foreground/40 active:border-muted-foreground/40 bg-accent pl-3 pr-4 py-3 text-left min-h-[80px] transition-colors cursor-pointer"
+                        >
+                          <div className="flex items-start justify-between w-full">
+                            <p className="font-sans text-[14px] leading-[18px] tracking-[-0.28px] text-foreground line-clamp-2 w-[120px]">
+                              {fav.summary || fav.prompt.slice(0, 60)}
+                              {(fav.summary || fav.prompt).length > 60 ? '…' : ''}
+                            </p>
+                            <span className="flex shrink-0 items-center opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-all duration-200 translate-y-1 group-hover:translate-y-0 group-active:translate-y-0">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  void removeFavorite(fav.taskId);
+                                }}
+                                className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-card"
+                                title="Remove from favorites"
+                                aria-label="Remove from favorites"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            </span>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                  {hasMoreFavorites && !showAllFavorites && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllFavorites(true)}
+                      className="text-center text-[13px] leading-[15px] tracking-[-0.13px] text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      Show all {favoritesList.length} favorites
+                    </button>
+                  )}
+                </>
+              ) : (
+                <p className="text-center text-[13px] leading-[15px] tracking-[-0.13px] text-muted-foreground">
+                  {t('favorites.empty')}
+                </p>
+              )}
+            </div>
+
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ ...springs.gentle, delay: 0.2 }}
               className="w-full"
             >
-              <div className="flex flex-col gap-3 pt-[200px] pb-[120px]">
+              <div className="flex flex-col gap-3 pt-12 pb-[120px]">
                 <h2 className="font-apparat text-[22px] font-light tracking-[-0.66px] text-foreground text-center">
                   {t('examplePrompts')}
                 </h2>
